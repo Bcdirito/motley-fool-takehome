@@ -19,5 +19,10 @@ export default {
 </script>
 
 <style>
-
+    .tag {
+        background-color: #78C5EF;
+        color: white;
+        border-radius: 10px;
+        padding: 5px
+    }
 </style>

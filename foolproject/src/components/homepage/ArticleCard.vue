@@ -2,13 +2,12 @@
   <div class="articleCard">
     <img class="articleCardImage" :src="metadata.images[0].image"/>
     <div class="articleTags">
-        <span class="tagSpan"
-            v-for="(tag) in metadata.tags"
-            :key=tag.uuid
-            :slug=tag.slug
-        >
-            {{ tag.name }}
-        </span>
+        <Tag
+            v-for="(tag, idx) in metadata.tags"
+            :key="'cardTag-' + idx"
+            :name="tag.name"
+            :slug="tag.slug"
+        />
     </div>
     <p class="articleCardHeadline">{{metadata.headline}}</p>
     {{metadata.promo}}
@@ -16,7 +15,12 @@
 </template>
 
 <script>
+import Tag from "../general/Tag"
+
 export default {
+    components: {
+        Tag
+    },
     props: {
         metadata: {
             type: Object,
@@ -24,7 +28,7 @@ export default {
         }
     },
     computed: {
-        // artilcesExist() {
+        // articlesExist() {
         //     return this.metadata.length
         // }
     }
@@ -47,13 +51,6 @@ export default {
         display: inline-flex;
         padding-top: 2%;
         cursor: pointer;
-    }
-
-    .tagSpan {
-        background-color: #78C5EF;
-        color: white;
-        border-radius: 10px;
-        padding: 5px
     }
 
     .articleCardHeadline {

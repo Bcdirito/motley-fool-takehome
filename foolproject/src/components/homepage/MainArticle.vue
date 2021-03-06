@@ -4,13 +4,12 @@
             <img class="image" :src="mainImageExists" />
         </section>
         <section id="mainArticle">
-            <span class="tagSpan"
-                v-for="(tag) in article.tags"
-                :key=tag.uuid
-                :slug=tag.slug
-            >
-                {{ tag.name }}
-            </span>
+            <Tag
+                v-for="(tag, idx) in article.tags"
+                :key="'mainTag-' + idx"
+                :name="tag.name"
+                :slug="tag.slug"
+            />
             <h2>{{article.headline}}</h2>
             <p>{{article.promo}}</p>
         </section>
@@ -18,7 +17,12 @@
 </template>
 
 <script>
+import Tag from "../general/Tag"
+
 export default {
+    components: {
+        Tag
+    },
     props: {
         article: {
             type: Object,

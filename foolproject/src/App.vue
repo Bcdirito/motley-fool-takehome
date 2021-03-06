@@ -22,9 +22,9 @@
 </template>
 
 <script>
-import MainArticle from "./components/MainArticle.vue"
-import ArticleCard from "./components/ArticleCard.vue"
-import ArticlePage from "./components/ArticlePage.vue"
+import MainArticle from "./components/homepage/MainArticle.vue"
+import ArticleCard from "./components/homepage/ArticleCard.vue"
+import ArticlePage from "./components/articlePage/ArticlePage.vue"
 
 export default {
   name: 'App',

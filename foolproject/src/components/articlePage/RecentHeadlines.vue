@@ -25,7 +25,6 @@ export default {
     },
     methods: {
         filteredHeadlines() {
-            console.log('erkjfbejf', this.headlines, this.articleUUID)
             return this.headlines.filter(headline => 
                 headline.uuid !== this.articleUUID
             )
