@@ -1,7 +1,7 @@
-<template>
+<template v-if="mainArticleExists">
     <div id="mainArticleContent">
         <section id="mainArticleImage">
-            <img class="image" :src="article.images[0].image" />
+            <img class="image" :src="mainImageExists" />
         </section>
         <section id="mainArticle">
             <span class="tagSpan"
@@ -23,6 +23,14 @@ export default {
         article: {
             type: Object,
             default: () => {}
+        }
+    },
+    computed: {
+        mainArticleExists() {
+            return this.article.uuid
+        },
+        mainImageExists() {
+            return this.article.uuid ? this.article.images[0].image : ""       
         }
     }
 }

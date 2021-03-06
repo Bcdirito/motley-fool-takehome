@@ -1,6 +1,6 @@
 <template>
-  <div class="articleTile">
-    <img class="articleTileImage" :src="metadata.images[0].image"/>
+  <div class="articleCard">
+    <img class="articleCardImage" :src="metadata.images[0].image"/>
     <div class="articleTags">
         <span class="tagSpan"
             v-for="(tag) in metadata.tags"
@@ -10,7 +10,7 @@
             {{ tag.name }}
         </span>
     </div>
-    <p class="articleTileHeadline">{{metadata.headline}}</p>
+    <p class="articleCardHeadline">{{metadata.headline}}</p>
     {{metadata.promo}}
   </div>
 </template>
@@ -22,18 +22,23 @@ export default {
             type: Object,
             default: () => {}
         }
+    },
+    computed: {
+        // artilcesExist() {
+        //     return this.metadata.length
+        // }
     }
 }
 </script>
 
 <style>
-    .articleTile {
+    .articleCard {
         width: 30%;
         display: inline-grid;
         margin-bottom: 5%;
     }
 
-    .articleTileImage{
+    .articleCardImage{
         width: 100%
         
     }
@@ -51,12 +56,12 @@ export default {
         padding: 5px
     }
 
-    .articleTileHeadline {
+    .articleCardHeadline {
         cursor: pointer;
         color: blue;
     }
 
-    .articleTileHeadline:hover {
+    .articleCardHeadline:hover {
         color: red;
     }
 </style>
