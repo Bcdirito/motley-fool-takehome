@@ -118,9 +118,66 @@ export default {
 </script>
 
 <style>
-  #articleCardSection, #mainArticleSection {
-    width: 90vw;
-    margin: auto;
-    margin-bottom: 5%;
-  }
+	:root {
+		--grey: rgb(241, 244, 254);
+		--white: #fff;
+	}
+
+	* {
+		box-sizing: border-box;
+	}
+
+	body, html {
+		margin: 0;
+		padding: 0;
+		width: 100%;
+		height: 100%;
+		padding: 0.5rem 1rem;
+		background-color: var(--grey);
+		font-family: 'Shippori Mincho', serif;
+		font-weight: normal
+	}
+
+	img {
+		width: 100%;
+		object-fit: cover;
+	}
+
+	ul {
+		list-style-type: none;
+		padding-left: 0;
+	}
+
+	button {
+		background: none;
+		border: 0;
+		padding: 0;
+		cursor: pointer;
+		font-family: 'Open Sans', sans-serif;
+	}
+
+	.tagWrapper {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 0.5rem 0;
+	}
+
+	.contentWrapper {
+		padding: 1.5rem;
+	}
+
+	#articleCardSection, #mainArticleSection {
+		margin: auto;
+		margin-bottom: 5%;
+		/* background-color: red; */
+	}
+
+	@media (min-width: 768px) {
+
+	}
+
+	@media (min-width: 1024px) {
+
+	}
 </style>

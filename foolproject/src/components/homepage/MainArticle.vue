@@ -3,13 +3,15 @@
         <section id="mainArticleImage">
             <img class="image" :src="mainImageExists" />
         </section>
-        <section id="mainArticle">
-            <Tag
-                v-for="(tag, idx) in article.tags"
-                :key="'mainTag-' + idx"
-                :name="tag.name"
-                :slug="tag.slug"
-            />
+        <section class="contentWrapper">
+            <ul class="tagWrapper">
+                <Tag
+                    v-for="(tag, idx) in article.tags"
+                    :key="'mainTag-' + idx"
+                    :name="tag.name"
+                    :slug="tag.slug"
+                />
+            </ul>
             <h2>{{article.headline}}</h2>
             <p>{{article.promo}}</p>
         </section>
@@ -43,20 +45,17 @@ export default {
 <style>
     #mainArticleContent {
         display: flex;
+        flex-direction: column;
+        border: 1px solid rgb(239, 239, 239);
+        background-color: var(--white);
     }
 
     #mainArticleImage {
-        width: 30%;
         display: inline-flex;
     }
 
     #mainArticleImage .image {
         width: 100%;
-    }
-
-    #mainArticle {
-        width: 70%;
-        display: inline-flex
     }
 
     .spanRow {

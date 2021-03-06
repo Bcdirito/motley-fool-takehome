@@ -1,16 +1,18 @@
 <template>
   <div class="articleCard">
     <img class="articleCardImage" :src="metadata.images[0].image"/>
-    <div class="articleTags">
+    <div class="contentWrapper">
+        <ul class="tagWrapper">
         <Tag
             v-for="(tag, idx) in metadata.tags"
             :key="'cardTag-' + idx"
             :name="tag.name"
             :slug="tag.slug"
         />
+        </ul>
+        <a class="articleCardHeadline"><h3>{{metadata.headline}}</h3></a>
+        <p class="cardPromo">{{metadata.promo}}</p>
     </div>
-    <p class="articleCardHeadline">{{metadata.headline}}</p>
-    {{metadata.promo}}
   </div>
 </template>
 
@@ -37,28 +39,22 @@ export default {
 
 <style>
     .articleCard {
-        width: 30%;
         display: inline-grid;
         margin-bottom: 5%;
-    }
-
-    .articleCardImage{
-        width: 100%
-        
+        border: 1px solid rgb(239, 239, 239);
+        background-color: var(--white);
     }
 
     .articleTags {
         display: inline-flex;
         padding-top: 2%;
-        cursor: pointer;
     }
 
-    .articleCardHeadline {
-        cursor: pointer;
-        color: blue;
+    .articleCardImage {
+        display: none;
     }
 
-    .articleCardHeadline:hover {
-        color: red;
+    .cardPromo {
+        display: none;
     }
 </style>
