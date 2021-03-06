@@ -28,11 +28,20 @@ export default {
 
 <style>
     .articleTile {
-        width: 30%
+        width: 30%;
+        display: inline-grid;
+        margin-bottom: 5%;
     }
 
     .articleTileImage{
         width: 100%
+        
+    }
+
+    .articleTags {
+        display: inline-flex;
+        padding-top: 2%;
+        cursor: pointer;
     }
 
     .tagSpan {

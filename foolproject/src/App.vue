@@ -1,13 +1,17 @@
 <template>
   <div id="app">
-    <MainArticleTile 
-      :msg="this.getDisclosure"
-    />
-    <ArticleTile
-      v-for="(article, idx) in articles"
-      :key="idx"
-      :metadata="article"
-    />
+    <section v-if="articleSelected.selected === false && Object.keys(articles.mainArticle).length > 0" id="mainArticleSection">
+      <MainArticleTile 
+        :article="articles.mainArticle"
+      />
+    </section>
+    <section v-if="articleSelected.selected === false" id="articleTileSection">
+      <ArticleTile
+        v-for="(article, idx) in articles.otherArticles"
+        :key="idx"
+        :metadata="article"
+      />
+    </section>
   </div>
 </template>
 
@@ -24,46 +28,71 @@ export default {
   },
   data() {
     return {
-      articles: [],
+      articles: {
+        mainArticle: {},
+        otherArticles: [],
+        allArticles: []
+      },
       featuredArticle: {},
       displayFeatured: true,
+      articleSelected: {
+        selected: false,
+        article: {}
+      },
       disclosure: null
     }
   },
   computed: {
-    getArticles() {
-      return this.articles
+    allArticleData: {
+      get: function() {
+        return this.articles.allArticles
+      },
+      set: function(articles) {
+        this.articles.allArticles = articles
+      }
     },
-    getDisclosure() {
-      return this.disclosure
+    mainArticleData: {
+      get: function() {
+        return this.articles.mainArticle
+      },
+      set: function(article) {
+        this.articles.mainArticle = article
+      }
+    },
+    otherArticleData: {
+      get: function() {
+        return this.articles.otherArticles
+      },
+      set: function(articles) {
+        this.articles.otherArticles = articles
+      }
     }
   },
   created() {
     this.getData()
   },
-  mounted() {
-    this.disclosure = this.articles.length !== 0 ? this.articles[0]["disclosure"] : null
-  },
-  updated() {
-    console.log(this.articles)
-  },
   methods: {
     async getData() {
       const res = await fetch('/content')
       const { results } = await res.json()
-      this.articles = results
+      this.allArticleData = results
+      const otherArticles = []
+      
+      for (const result of results) {
+        if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === "10-promise")) this.mainArticleData = result
+        else otherArticles.push(result)
+      }
+
+      this.otherArticleData = otherArticles
     }
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  #articleTileSection, #mainArticleSection {
+    width: 90vw;
+    margin: auto;
+    margin-bottom: 5%;
+  }
 </style>
