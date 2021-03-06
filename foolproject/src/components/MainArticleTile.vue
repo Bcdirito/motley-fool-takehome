@@ -24,10 +24,6 @@ export default {
             type: Object,
             default: () => {}
         }
-    },
-    mounted() {
-        console.log(this.article.body.replace(/(<([^>]+)>)/gi, "").split(" ").slice(0, 50))
-        // document.getElementById("mainText").innerHTML = "SOMETHING"
     }
 }
 </script>

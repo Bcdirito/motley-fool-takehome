@@ -1,13 +1,13 @@
 <template>
   <div id="app">
-    <section v-if="articleSelected.selected === false && Object.keys(articles.mainArticle).length > 0" id="mainArticleSection">
+    <section v-if="articleSelected.selected === false && Object.keys(mainArticleData).length > 0" id="mainArticleSection">
       <MainArticleTile 
-        :article="articles.mainArticle"
+        :article="mainArticleData"
       />
     </section>
     <section v-if="articleSelected.selected === false" id="articleTileSection">
       <ArticleTile
-        v-for="(article, idx) in articles.otherArticles"
+        v-for="(article, idx) in secondaryArticleData"
         :key="idx"
         :metadata="article"
       />
@@ -30,7 +30,7 @@ export default {
     return {
       articles: {
         mainArticle: {},
-        otherArticles: [],
+        secondaryArticles: [],
         allArticles: []
       },
       featuredArticle: {},
@@ -59,12 +59,12 @@ export default {
         this.articles.mainArticle = article
       }
     },
-    otherArticleData: {
+    secondaryArticleData: {
       get: function() {
-        return this.articles.otherArticles
+        return this.articles.secondaryArticles
       },
       set: function(articles) {
-        this.articles.otherArticles = articles
+        this.articles.secondaryArticles = articles
       }
     }
   },
@@ -76,14 +76,14 @@ export default {
       const res = await fetch('/content')
       const { results } = await res.json()
       this.allArticleData = results
-      const otherArticles = []
+      const secondaryArticles = []
       
       for (const result of results) {
         if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === "10-promise")) this.mainArticleData = result
-        else otherArticles.push(result)
+        else secondaryArticles.push(result)
       }
 
-      this.otherArticleData = otherArticles
+      this.secondaryArticleData = secondaryArticles
     }
   }
 }
