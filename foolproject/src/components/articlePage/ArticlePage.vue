@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import Tag from "./Tag.vue"
+import Tag from "../general/Tag.vue"
 import Ticker from "./Ticker.vue"
 import RecentHeadlines from "./RecentHeadlines.vue"
 
