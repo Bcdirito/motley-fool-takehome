@@ -45,6 +45,7 @@
 				:article="selectedArticle"
 				:headlines="headlineData"
 				:selectHandler="selectArticle"
+				:tickers="selectedTickerData"
 			/>
 		</section>
 	</div>
@@ -71,7 +72,10 @@ export default {
 			all: [],
 		},
 		selectedArticle: {},
-		tickers: [],
+		tickers: {
+			all: [],
+			selected: []
+		},
 		headlines: [],
 		filterTags: []
     }
@@ -125,6 +129,22 @@ export default {
 			return this.filterTags = tags
 		}
 	},
+	allTickerData: {
+		get: function() {
+			return this.tickers.all
+		},
+		set: function(tickers) {
+			this.tickers.all = tickers
+		}
+	},
+	selectedTickerData: {
+		get: function() {
+			return this.tickers.selected
+		},
+		set: function(tickers) {
+			this.tickers.selected = tickers
+		}
+	}
   },
   created() {
     this.getData()
@@ -137,17 +157,20 @@ export default {
 		this.allArticleData = results
 		const secondaryArticles = []
 		const headlineArr = []
+		const tickerArr = []
+
 		for (const result of results) {
 			if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === "10-promise")) this.mainArticleData = result
 			else secondaryArticles.push(result)
-			this.tickers.push(...result.instruments)
 			headlineArr.push({
 				uuid: result.uuid,
 				title: result.headline,
 				publishedDate: new Date(result.publish_at)
 			})
+			tickerArr.push(...result.instruments)
 		}
 
+		this.allTickerData = Array.from(new Set(tickerArr))
 		this.secondaryArticleData = secondaryArticles
 		this.headlineData = headlineArr.sort((a, b) => b.publishedDate - a.publishedDate)
 	},
@@ -155,6 +178,23 @@ export default {
 		const selectedArticle = this.allArticleData.find(article => article.uuid === e.target.dataset.uuid)
 		this.selectedArticleData = selectedArticle
 		const pathStr = `${selectedArticle.collection.path}/${encodeURI(selectedArticle.headline.replaceAll(" ", "-").toLowerCase())}`
+		const tickers = selectedArticle.instruments.slice(0, 3)
+		const allTickers = this.allTickerData
+
+		if (tickers.length < 3) {
+			const history = {}
+			for (const ticker of tickers) {
+				history[ticker.instrument_id] = 1
+			}
+
+			while (tickers.length < 3) {
+				const randomIdx = Math.floor(Math.random() * allTickers.length)
+				const ticker = allTickers[randomIdx]
+				if (!history[ticker.instrument_id]) tickers.push(ticker)
+			} 
+		}
+
+		this.selectedTickerData = tickers
 		window.history.pushState({path:pathStr},'',pathStr);
 		window.scrollTo(0, 0)
 	},

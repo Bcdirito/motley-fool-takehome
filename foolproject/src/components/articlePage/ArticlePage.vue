@@ -22,7 +22,7 @@
                 <aside v-if="selectedArticleExists" id="tickerHeadlines">
                     <div class="tickerContainer">
                         <Ticker
-                            v-for="(instrument, idx) in article.instruments"
+                            v-for="(instrument, idx) in tickers"
                             :key="'instrument-' + idx"
                             :company="instrument.company_name"
                             :symbol="instrument.symbol"
@@ -70,6 +70,10 @@ export default {
         selectHandler: {
             type: Function,
             default: () => {}
+        },
+        tickers: {
+            type: Array,
+            default: () => []
         }
     },
     computed: {
