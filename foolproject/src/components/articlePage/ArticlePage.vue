@@ -27,6 +27,7 @@
                             :company="instrument.company_name"
                             :symbol="instrument.symbol"
                         />
+                        <button class="newStocksButton" @click="newTickerHandler">Get New Stocks</button>
                     </div>
                     <hr class="asideDivider"/>
                     <div>
@@ -74,6 +75,10 @@ export default {
         tickers: {
             type: Array,
             default: () => []
+        },
+        newTickerHandler: {
+            type: Function,
+            default: () => {}
         }
     },
     computed: {
@@ -130,6 +135,13 @@ export default {
 
     #commentsBox {
         width: 100%
+    }
+
+    .newStocksButton {
+        background-color: var(--grey);
+        padding: 1rem;
+        border-radius: 15px;
+        border: 2px solid #8BA4FF;
     }
 
     @media (min-width: 1024px) {

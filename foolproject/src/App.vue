@@ -46,6 +46,7 @@
 				:headlines="headlineData"
 				:selectHandler="selectArticle"
 				:tickers="selectedTickerData"
+				:newTickerHandler="shuffleTickers"
 			/>
 		</section>
 	</div>
@@ -258,6 +259,24 @@ export default {
 		}
 
 		this.secondaryArticleData = secondaryArticles
+	},
+	shuffleTickers() {
+		const selectedTickers = this.selectedTickerData
+		const allTickers = this.allTickerData
+		const history = {}
+		const newTickers = []
+
+		for (const ticker of selectedTickers) {
+			history[ticker.instrument_id] = 1
+		}
+
+		while (newTickers.length < 3) {
+			const randomIdx = Math.floor(Math.random() * allTickers.length)
+			const ticker = allTickers[randomIdx]
+			if (!history[ticker.instrument_id]) newTickers.push(ticker)
+		}
+
+		this.selectedTickerData = newTickers
 	}
   }
 }
