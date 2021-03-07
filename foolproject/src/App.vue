@@ -44,6 +44,7 @@
 			<ArticlePage
 				:article="selectedArticle"
 				:headlines="headlineData"
+				:selectHandler="selectArticle"
 			/>
 		</section>
 	</div>
@@ -155,6 +156,7 @@ export default {
 		this.selectedArticleData = selectedArticle
 		const pathStr = `${selectedArticle.collection.path}/${encodeURI(selectedArticle.headline.replaceAll(" ", "-").toLowerCase())}`
 		window.history.pushState({path:pathStr},'',pathStr);
+		window.scrollTo(0, 0)
 	},
 	sortArticles(e) {
 		let articlesCopy = this.secondaryArticleData.length < 9 ? [this.mainArticleData, ...this.secondaryArticleData] : this.allArticleData.slice()

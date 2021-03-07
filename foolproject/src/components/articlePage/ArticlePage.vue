@@ -33,6 +33,7 @@
                         <RecentHeadlines 
                             :headlines="headlines"
                             :articleUUID="article.uuid"
+                            :articleSelector="selectHandler"
                         />
                     </div>
                 </aside>
@@ -65,6 +66,10 @@ export default {
         headlines: {
             type: Array,
             default: () => []
+        },
+        selectHandler: {
+            type: Function,
+            default: () => {}
         }
     },
     computed: {
