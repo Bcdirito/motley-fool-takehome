@@ -12,7 +12,7 @@
                     :slug="tag.slug"
                 />
             </ul>
-            <h2 :data-uuid="article.uuid" @click="articleSelector">{{article.headline}}</h2>
+            <a><h2 :data-uuid="article.uuid" @click="articleSelector">{{article.headline}}</h2></a>
             <p>{{article.promo}}</p>
         </section>
     </div>

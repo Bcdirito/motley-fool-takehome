@@ -120,6 +120,8 @@ export default {
 	selectArticle(e) {
 		const selectedArticle = this.allArticleData.find(article => article.uuid === e.target.dataset.uuid)
 		this.selectedArticleData = selectedArticle
+		const pathStr = `/${encodeURI(selectedArticle.headline.replaceAll(" ", "-").toLowerCase())}`
+		window.history.pushState({path:pathStr},'',pathStr);
 	}
   }
 }
@@ -163,6 +165,10 @@ export default {
 		cursor: pointer;
 		font-family: 'Open Sans', sans-serif;
 	}
+
+	a {
+        cursor: pointer;
+    }
 
 	#app {
 		max-width: 1440px;
