@@ -2,6 +2,7 @@
     <div id="articlePage" v-if="selectedArticleExists">
         <article id="articleContent">
             <div class="articleData">
+                <span class="xIcon" @click="backHandler">X</span>
                 <h1 class="headline">{{article.headline}}</h1>
                 <ul class="tagWrapper">
                     <Tag 
@@ -79,6 +80,10 @@ export default {
         newTickerHandler: {
             type: Function,
             default: () => {}
+        },
+        backHandler: {
+            type: Function,
+            default: () => {}
         }
     },
     computed: {
@@ -108,6 +113,13 @@ export default {
 
     #articleContent {
         width: 100%;
+    }
+
+    .xIcon {
+        color: #8BA4FF;
+        font-size: 1.5rem;
+        margin: 0;
+        cursor: pointer;
     }
 
     .authorAvatar {
@@ -144,9 +156,19 @@ export default {
         border: 2px solid #8BA4FF;
     }
 
+    @media (min-width: 768px) {
+        .xIcon {
+            font-size: 2rem;
+        }
+    }
+
     @media (min-width: 1024px) {
         .mobileDivider {
             display: none;
+        }
+
+        .xIcon {
+            font-size: 1.75rem;
         }
 
         #textContent {

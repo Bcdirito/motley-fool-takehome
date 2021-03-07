@@ -47,6 +47,7 @@
 				:selectHandler="selectArticle"
 				:tickers="selectedTickerData"
 				:newTickerHandler="shuffleTickers"
+				:backHandler="backToHomepage"
 			/>
 		</section>
 	</div>
@@ -277,8 +278,12 @@ export default {
 		}
 
 		this.selectedTickerData = newTickers
+	},
+	backToHomepage() {
+		this.selectedArticleData = {}
+		this.selectedTickers = []
 	}
-  }
+  },
 }
 </script>
 
@@ -329,6 +334,7 @@ export default {
 		max-width: 1440px;
 		margin-left: auto;
 		margin-right: auto;
+		padding-bottom: 1.5rem;
 	}
 
 	#filterTags {
