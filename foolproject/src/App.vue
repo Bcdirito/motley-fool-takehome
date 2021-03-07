@@ -4,6 +4,7 @@
 			<MainArticle
 				:article="mainArticleData"
 				:articleSelector="selectArticle"
+				:selectedArticle="selectedArticleData.uuid !== undefined"
 			/>
 		</section>
 		<section id="articleCardSection">
@@ -12,6 +13,7 @@
 				:key="idx"
 				:metadata="article"
 				:articleSelector="selectArticle"
+				:selectedArticle="selectedArticleData.uuid !== undefined"
 				/>
 		</section>
 		<section id="articlePageSection">
@@ -118,7 +120,6 @@ export default {
 	selectArticle(e) {
 		const selectedArticle = this.allArticleData.find(article => article.uuid === e.target.dataset.uuid)
 		this.selectedArticleData = selectedArticle
-		console.log(this.selectedArticleData)
 	}
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="articleCard">
+  <div class="articleCard" v-if="!articleSelected">
     <img class="articleCardImage" :src="metadata.images[0].image"/>
     <div class="contentWrapper">
         <ul class="tagWrapper">
@@ -30,12 +30,15 @@ export default {
         },
         articleSelector: {
             type: Function
+        },
+        selectedArticle: {
+            type: Boolean
         }
     },
     computed: {
-        // articlesExist() {
-        //     return this.metadata.length
-        // }
+        articleSelected() {
+            return this.selectedArticle
+        }
     }
 }
 </script>

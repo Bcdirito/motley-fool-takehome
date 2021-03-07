@@ -1,7 +1,7 @@
-<template v-if="mainArticleExists">
-    <div id="mainArticleContent">
+<template>
+    <div id="mainArticleContent" v-if="mainArticleExists && !articleSelected">
         <section id="imageContainer">
-            <img class="image" :src="mainImageExists" />
+            <img class="image" :src="article.images[0].image" />
         </section>
         <section class="contentWrapper">
             <ul class="tagWrapper">
@@ -32,14 +32,17 @@ export default {
         },
         articleSelector: {
             type: Function
+        },
+        selectedArticle: {
+            type: Boolean
         }
     },
     computed: {
         mainArticleExists() {
             return this.article.uuid
         },
-        mainImageExists() {
-            return this.article.uuid ? this.article.images[0].image : ""       
+        articleSelected() {
+            return this.selectedArticle
         }
     }
 }
