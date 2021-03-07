@@ -1,11 +1,12 @@
 <template>
     <div>
-        <h4>Recent Headlines:</h4>
-        <ul>
+        <h3>Recent Headlines:</h3>
+        <ul class="headlinesContainer">
             <li v-for="(headline, idx) in filteredHeadlines()"
                 :key="'headline-' + idx"
+                class="headlineLink"
             >
-                {{headline.title}}
+                <a :data-uuid="headline.uuid">{{headline.title}}</a>
             </li>
         </ul>
     </div>
@@ -32,3 +33,18 @@ export default {
     }
 }
 </script>
+
+<style>
+    .headlinesContainer {
+        list-style-type: disc;
+    }
+
+    .headlineLink a {
+        color: blue;
+        text-decoration: underline;
+    }
+
+    .headlineLink:not(:last-child) {
+        margin-bottom: 0.5rem;
+    }
+</style>

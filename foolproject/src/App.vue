@@ -1,6 +1,6 @@
 <template>
 	<div id="app">
-		<div id="filterTags">
+		<div id="filterTags" v-if="selectedArticleData.uuid === undefined">
 			<div class="sortSelect">
 				<span class="sortText">Sort By:</span>
 				<select name="Sort Article By:" id="sortOptions" @change="sortArticles">
@@ -130,6 +130,7 @@ export default {
   },
   methods: {
 	async getData() {
+		if (window.location.pathname !== "/") window.history.pushState({path:'/'},'','/');
 		const res = await fetch('/content')
 		const { results } = await res.json()
 		this.allArticleData = results
@@ -152,7 +153,7 @@ export default {
 	selectArticle(e) {
 		const selectedArticle = this.allArticleData.find(article => article.uuid === e.target.dataset.uuid)
 		this.selectedArticleData = selectedArticle
-		const pathStr = `/${encodeURI(selectedArticle.headline.replaceAll(" ", "-").toLowerCase())}`
+		const pathStr = `${selectedArticle.collection.path}/${encodeURI(selectedArticle.headline.replaceAll(" ", "-").toLowerCase())}`
 		window.history.pushState({path:pathStr},'',pathStr);
 	},
 	sortArticles(e) {
