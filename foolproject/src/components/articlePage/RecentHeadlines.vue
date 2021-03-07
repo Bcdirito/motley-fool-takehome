@@ -6,7 +6,7 @@
                 :key="'headline-' + idx"
                 class="headlineLink"
             >
-                <a :data-uuid="headline.uuid">{{headline.title}}</a>
+                <a :data-uuid="headline.uuid" @click="articleSelector">{{headline.title}}</a>
             </li>
         </ul>
     </div>
@@ -22,6 +22,10 @@ export default {
         articleUUID: {
             type: String,
             default: ""
+        },
+        articleSelector: {
+            type: Function,
+            default: () => {}
         }
     },
     methods: {

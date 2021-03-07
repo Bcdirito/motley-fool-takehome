@@ -2,6 +2,7 @@
     <div id="articlePage" v-if="selectedArticleExists">
         <article id="articleContent">
             <div class="articleData">
+                <span class="xIcon" @click="backHandler">X</span>
                 <h1 class="headline">{{article.headline}}</h1>
                 <ul class="tagWrapper">
                     <Tag 
@@ -22,17 +23,19 @@
                 <aside v-if="selectedArticleExists" id="tickerHeadlines">
                     <div class="tickerContainer">
                         <Ticker
-                            v-for="(instrument, idx) in article.instruments"
+                            v-for="(instrument, idx) in tickers"
                             :key="'instrument-' + idx"
                             :company="instrument.company_name"
                             :symbol="instrument.symbol"
                         />
+                        <button class="newStocksButton" @click="newTickerHandler">Get New Stocks</button>
                     </div>
                     <hr class="asideDivider"/>
                     <div>
                         <RecentHeadlines 
                             :headlines="headlines"
                             :articleUUID="article.uuid"
+                            :articleSelector="selectHandler"
                         />
                     </div>
                 </aside>
@@ -65,6 +68,22 @@ export default {
         headlines: {
             type: Array,
             default: () => []
+        },
+        selectHandler: {
+            type: Function,
+            default: () => {}
+        },
+        tickers: {
+            type: Array,
+            default: () => []
+        },
+        newTickerHandler: {
+            type: Function,
+            default: () => {}
+        },
+        backHandler: {
+            type: Function,
+            default: () => {}
         }
     },
     computed: {
@@ -96,6 +115,13 @@ export default {
         width: 100%;
     }
 
+    .xIcon {
+        color: #8BA4FF;
+        font-size: 1.5rem;
+        margin: 0;
+        cursor: pointer;
+    }
+
     .authorAvatar {
         display: none;
     }
@@ -112,6 +138,10 @@ export default {
     #articleContent .tagWrapper {
         padding-bottom: 1rem;
     }
+    
+    #articleContent .tagWrapper .tag {
+        cursor: initial;
+    }
 
     .caption, .disclosure {
         color: rgba(0, 0, 0, 0.5);
@@ -123,9 +153,26 @@ export default {
         width: 100%
     }
 
+    .newStocksButton {
+        background-color: var(--grey);
+        padding: 1rem;
+        border-radius: 15px;
+        border: 2px solid #8BA4FF;
+    }
+
+    @media (min-width: 768px) {
+        .xIcon {
+            font-size: 2rem;
+        }
+    }
+
     @media (min-width: 1024px) {
         .mobileDivider {
             display: none;
+        }
+
+        .xIcon {
+            font-size: 1.75rem;
         }
 
         #textContent {
@@ -135,7 +182,7 @@ export default {
         #mainContent {
             display: grid;
             grid-template-columns: 3fr 1fr;
-            column-gap: 1.5rem;
+            column-gap: 3rem;
         }
 
         #tickerHeadlines {
