@@ -1,5 +1,11 @@
 <template>
 	<div id="app">
+		<select name="Sort Article By:" id="sortOptions" @change="sortArticles">
+			<option value="non">--</option>
+			<option value="newest">Newest</option>
+			<option value="oldest">Oldest</option>
+			<option value="alpha">Alphabetical</option>
+		</select>
 		<section id="mainArticleSection">
 			<MainArticle
 				:article="mainArticleData"
@@ -122,6 +128,24 @@ export default {
 		this.selectedArticleData = selectedArticle
 		const pathStr = `/${encodeURI(selectedArticle.headline.replaceAll(" ", "-").toLowerCase())}`
 		window.history.pushState({path:pathStr},'',pathStr);
+	},
+	sortArticles(e) {
+		let allArticlesCopy = this.allArticleData.slice()
+
+		if (e.target.value === "newest") allArticlesCopy.sort((a, b) => new Date(b.publish_at) - new Date(a.publish_at))
+		else if (e.target.value === "oldest") allArticlesCopy.sort((a, b) => new Date(a.publish_at) - new Date(b.publish_at))
+		else allArticlesCopy.sort((a, b) => a.headline.localeCompare(b.headline))
+
+		this.mainArticleData = {}
+		this.secondaryArticleData = []
+		const secondaryArticles = []
+
+		for (const article of allArticlesCopy) {
+			if (!this.mainArticleData.uuid && article.tags.some(tag => tag.slug === "10-promise")) this.mainArticleData = article
+			else secondaryArticles.push(article)
+		}
+
+		this.secondaryArticleData = secondaryArticles
 	}
   }
 }
