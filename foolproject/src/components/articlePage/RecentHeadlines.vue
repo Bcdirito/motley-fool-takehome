@@ -1,11 +1,12 @@
 <template>
     <div>
-        <h4>Recent Headlines:</h4>
+        <h3>Recent Headlines:</h3>
         <ul>
             <li v-for="(headline, idx) in filteredHeadlines()"
                 :key="'headline-' + idx"
+                class="headlineLink"
             >
-                {{headline.title}}
+                <a :data-uuid="headline.uuid">{{headline.title}}</a>
             </li>
         </ul>
     </div>
@@ -32,3 +33,11 @@ export default {
     }
 }
 </script>
+
+<style>
+    .headlineLink {
+        color: blue;
+        margin-bottom: 0.5rem;
+        text-decoration: underline;
+    }
+</style>

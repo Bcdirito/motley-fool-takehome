@@ -16,7 +16,8 @@ export default {
             default: ""
         },
         filterEvent: {
-            type: Function
+            type: Function,
+            default: () => {}
         }
     }
     
