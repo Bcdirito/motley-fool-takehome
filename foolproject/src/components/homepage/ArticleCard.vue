@@ -8,6 +8,7 @@
             :key="'cardTag-' + idx"
             :name="tag.name"
             :slug="tag.slug"
+            :filterEvent="filterHandler"
         />
         </ul>
         <a class="articleCardHeadline"><h3 :data-uuid="metadata.uuid" @click="articleSelector">{{metadata.headline}}</h3></a>
@@ -33,6 +34,9 @@ export default {
         },
         selectedArticle: {
             type: Boolean
+        },
+        filterHandler: {
+            type: Function
         }
     },
     computed: {

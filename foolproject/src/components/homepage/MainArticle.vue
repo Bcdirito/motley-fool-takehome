@@ -10,6 +10,7 @@
                     :key="'mainTag-' + idx"
                     :name="tag.name"
                     :slug="tag.slug"
+                    :filterEvent="filterHandler"
                 />
             </ul>
             <a><h2 :data-uuid="article.uuid" @click="articleSelector">{{article.headline}}</h2></a>
@@ -35,6 +36,9 @@ export default {
         },
         selectedArticle: {
             type: Boolean
+        },
+        filterHandler: {
+            type: Function
         }
     },
     computed: {
