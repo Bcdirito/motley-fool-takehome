@@ -56,6 +56,7 @@ export default {
     },
     computed: {
         selectedArticleExists() {
+            console.log(this.article.uuid)
             return this.article.uuid
         }
     },

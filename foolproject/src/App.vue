@@ -3,18 +3,20 @@
 		<section id="mainArticleSection">
 			<MainArticle
 				:article="mainArticleData"
+				:articleSelector="selectArticle"
 			/>
 		</section>
-		<section v-if="articleSelected.selected === false" id="articleCardSection">
+		<section id="articleCardSection">
 			<ArticleCard
 				v-for="(article, idx) in secondaryArticleData"
 				:key="idx"
 				:metadata="article"
+				:articleSelector="selectArticle"
 				/>
 		</section>
 		<section id="articlePageSection">
 			<ArticlePage
-				:article="articleSelected.article"
+				:article="selectedArticle"
 				:headlines="headlineData"
 			/>
 		</section>
@@ -42,10 +44,7 @@ export default {
 		},
 		featuredArticle: {},
 		displayFeatured: true,
-		articleSelected: {
-			selected: false,
-			article: {}
-		},
+		selectedArticle: {},
 		tickers: [],
 		headlines: []
     }
@@ -82,11 +81,15 @@ export default {
 		set: function(headlines) {
 			this.headlines = headlines
 		}
+	},
+	selectedArticleData: {
+		get: function() {
+			return this.selectedArticle
+		},
+		set: function(article) {
+			this.selectedArticle = article
+		}
 	}
-    // refactor for when article selected getter and setter created
-    // mainArticleExists() {
-    //   return !this.articleSelected.selected && this.mainArticleData.uuid
-    // }
   },
   created() {
     this.getData()
@@ -110,8 +113,12 @@ export default {
 		}
 
 		this.secondaryArticleData = secondaryArticles
-		this.articleSelected.article = results[0]
 		this.headlineData = headlineArr.sort((a, b) => b.publishedDate - a.publishedDate)
+	},
+	selectArticle(e) {
+		const selectedArticle = this.allArticleData.find(article => article.uuid === e.target.dataset.uuid)
+		this.selectedArticleData = selectedArticle
+		console.log(this.selectedArticleData)
 	}
   }
 }

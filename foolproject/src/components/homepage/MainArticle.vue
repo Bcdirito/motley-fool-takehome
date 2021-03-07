@@ -12,7 +12,7 @@
                     :slug="tag.slug"
                 />
             </ul>
-            <h2>{{article.headline}}</h2>
+            <h2 :data-uuid="article.uuid" @click="articleSelector">{{article.headline}}</h2>
             <p>{{article.promo}}</p>
         </section>
     </div>
@@ -29,6 +29,9 @@ export default {
         article: {
             type: Object,
             default: () => {}
+        },
+        articleSelector: {
+            type: Function
         }
     },
     computed: {

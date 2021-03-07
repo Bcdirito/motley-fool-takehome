@@ -10,7 +10,7 @@
             :slug="tag.slug"
         />
         </ul>
-        <a class="articleCardHeadline"><h3>{{metadata.headline}}</h3></a>
+        <a class="articleCardHeadline"><h3 :data-uuid="metadata.uuid" @click="articleSelector">{{metadata.headline}}</h3></a>
         <p class="cardPromo">{{metadata.promo}}</p>
     </div>
   </div>
@@ -27,6 +27,9 @@ export default {
         metadata: {
             type: Object,
             default: () => {}
+        },
+        articleSelector: {
+            type: Function
         }
     },
     computed: {
