@@ -4,7 +4,7 @@
 			<div class="sortSelect">
 				<span class="sortText">Sort By:</span>
 				<select name="Sort Article By:" id="sortOptions" @change="sortArticles">
-				<option value="non">--</option>
+				<option value="">--</option>
 				<option value="newest">Newest</option>
 				<option value="oldest">Oldest</option>
 				<option value="alpha">Alphabetical</option>
@@ -205,7 +205,7 @@ export default {
 
 		if (e.target.value === "newest") articlesCopy.sort((a, b) => new Date(b.publish_at) - new Date(a.publish_at))
 		else if (e.target.value === "oldest") articlesCopy.sort((a, b) => new Date(a.publish_at) - new Date(b.publish_at))
-		else articlesCopy.sort((a, b) => a.headline.localeCompare(b.headline))
+		else if (e.target.value === "alpha") articlesCopy.sort((a, b) => a.headline.localeCompare(b.headline))
 
 		this.mainArticleData = {}
 		this.secondaryArticleData = []
@@ -219,36 +219,56 @@ export default {
 		this.secondaryArticleData = secondaryArticles
 	},
 	async filterByTag(e) {
-		const {name, slug} = e.target.dataset
-		const tagObj = {name, slug}
-		const filterTags = Array.from(new Set([...this.filterTagData, tagObj]))
-		this.filterTagData = filterTags
-		const queryParams = filterTags.map(tag => `tag=${tag.slug}`).join("&")
-		
-		const res = await fetch(`/content?${queryParams}`)
-		const { results } = await res.json()
+		const history = {}
 
-		this.mainArticleData = {}
-		this.secondaryArticleData = []
-		const secondaryArticles = []
-
-		for (const result of results) {
-			if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === "10-promise")) this.mainArticleData = result
-			else secondaryArticles.push(result)
+		for (const tag of this.filterTagData) {
+			history[tag.slug] = 1
 		}
 
-		this.secondaryArticleData = secondaryArticles
+		if (!history[e.target.dataset.slug]) {
+			const {name, slug} = e.target.dataset
+			const tagObj = {name, slug}
+			const filterTags = [...this.filterTagData, tagObj]
+			this.filterTagData = filterTags
+			const queryParams = filterTags.map(tag => `tag=${tag.slug}`).join("&")
+			const sortOption = document.getElementById("sortOptions").value
+
+			const res = await fetch(`/content?${queryParams}`)
+			const { results } = await res.json()
+
+			if (sortOption === "newest") results.sort((a, b) => new Date(b.publish_at) - new Date(a.publish_at))
+			else if (sortOption === "oldest") results.sort((a, b) => new Date(a.publish_at) - new Date(b.publish_at))
+			else if (sortOption === "alpha") results.sort((a, b) => a.headline.localeCompare(b.headline))
+
+
+			this.mainArticleData = {}
+			this.secondaryArticleData = []
+			const secondaryArticles = []
+
+			for (const result of results) {
+				if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === "10-promise")) this.mainArticleData = result
+				else secondaryArticles.push(result)
+			}
+
+			this.secondaryArticleData = secondaryArticles
+		}
 	},
 	async removeFilterByTag(e) {
 		const {name, slug} = e.target.dataset
 		const filterTags = this.filterTagData.filter(filter => 
 			name !== filter.name && slug !== filter.slug
 		)
+
 		this.filterTagData = filterTags
 		const queryParams = filterTags.map(tag => `tag=${tag.slug}`).join("&")
+		const sortOption = document.getElementById("sortOptions").value
 
 		const res = await fetch(`/content?${queryParams}`)
 		const { results } = await res.json()
+
+		if (sortOption === "newest") results.sort((a, b) => new Date(b.publish_at) - new Date(a.publish_at))
+		else if (sortOption === "oldest") results.sort((a, b) => new Date(a.publish_at) - new Date(b.publish_at))
+		else if (sortOption === "alpha") results.sort((a, b) => a.headline.localeCompare(b.headline))
 
 		this.mainArticleData = {}
 		this.secondaryArticleData = []
