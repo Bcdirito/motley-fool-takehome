@@ -39,8 +39,7 @@ export default {
 
 <style>
     .articleCard {
-        display: inline-grid;
-        margin-bottom: 5%;
+        margin-bottom: 1rem;
         border: 1px solid rgb(239, 239, 239);
         background-color: var(--white);
     }
@@ -56,5 +55,35 @@ export default {
 
     .cardPromo {
         display: none;
+    }
+
+    @media (min-width: 768px) {
+        .articleCard {
+            margin-bottom: 0;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .articleCardImage {
+            display: initial;
+        }
+
+        .articleCardImage {
+            height: 225px;
+        }
+
+        .articleCard .tagWrapper {
+            margin-top: 0;
+        }
+    }
+
+    @media (min-width: 1440px) {
+        .cardPromo {
+            display: initial
+        }
+
+        .articleCardImage {
+            height: 355px;
+        }
     }
 </style>

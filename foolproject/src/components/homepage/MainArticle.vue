@@ -1,6 +1,6 @@
 <template v-if="mainArticleExists">
     <div id="mainArticleContent">
-        <section id="mainArticleImage">
+        <section id="imageContainer">
             <img class="image" :src="mainImageExists" />
         </section>
         <section class="contentWrapper">
@@ -50,16 +50,30 @@ export default {
         background-color: var(--white);
     }
 
-    #mainArticleImage {
-        display: inline-flex;
+    #imageContainer {
+        display: flex;
     }
 
-    #mainArticleImage .image {
+    #imageContainer .image {
         width: 100%;
     }
 
     .spanRow {
         display: inline-flex;
         width: 100%;
+    }
+
+    @media (min-width: 1440px) {
+        #imageContainer {
+            width: 40%;
+        }
+
+        #imageContainer img {
+            /* height: 400px; */
+        }
+
+        #mainArticleContent {
+            flex-direction: row;
+        }
     }
 </style>

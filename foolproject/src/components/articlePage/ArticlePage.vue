@@ -10,18 +10,20 @@
             <p class="byline">{{article.byline}} {{generateDateString()}}</p>
             <h2>{{article.headline}}</h2>
             <div v-html="article.body"></div>
-            <Ticker
-                v-for="(instrument, idx) in article.instruments"
-                :key="'instrument-' + idx"
-                :company="instrument.company"
-                :symbol="instrument.symbol"
-            />
-            <div>
-                <RecentHeadlines 
-                    :headlines="headlines"
-                    :articleUUID="article.uuid"
+            <aside>
+                <Ticker
+                    v-for="(instrument, idx) in article.instruments"
+                    :key="'instrument-' + idx"
+                    :company="instrument.company"
+                    :symbol="instrument.symbol"
                 />
-            </div>
+                <div>
+                    <RecentHeadlines 
+                        :headlines="headlines"
+                        :articleUUID="article.uuid"
+                    />
+                </div>
+            </aside>
         </article>
         <hr>
         <section>

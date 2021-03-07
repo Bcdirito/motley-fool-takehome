@@ -156,6 +156,12 @@ export default {
 		font-family: 'Open Sans', sans-serif;
 	}
 
+	#app {
+		max-width: 1440px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
 	.tagWrapper {
 		display: flex;
 		align-items: baseline;
@@ -167,17 +173,26 @@ export default {
 		padding: 1.5rem;
 	}
 
-	#articleCardSection, #mainArticleSection {
-		margin: auto;
-		margin-bottom: 5%;
-		/* background-color: red; */
+	#mainArticleSection, #articleCardSection {
+		margin-bottom: 2rem;
 	}
 
 	@media (min-width: 768px) {
+		body, html {
+			padding: 1.5rem 2rem;
+		}
 
+		#articleCardSection {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+			margin-bottom: 0;
+		}
 	}
 
 	@media (min-width: 1024px) {
-
+		#articleCardSection {
+			grid-template-columns: 1fr 1fr 1fr;
+		}
 	}
 </style>
