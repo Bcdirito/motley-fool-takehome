@@ -138,6 +138,10 @@ export default {
     #articleContent .tagWrapper {
         padding-bottom: 1rem;
     }
+    
+    #articleContent .tagWrapper .tag {
+        cursor: initial;
+    }
 
     .caption, .disclosure {
         color: rgba(0, 0, 0, 0.5);
@@ -178,7 +182,7 @@ export default {
         #mainContent {
             display: grid;
             grid-template-columns: 3fr 1fr;
-            column-gap: 1.5rem;
+            column-gap: 3rem;
         }
 
         #tickerHeadlines {
