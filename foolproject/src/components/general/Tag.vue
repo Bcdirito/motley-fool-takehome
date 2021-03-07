@@ -1,5 +1,5 @@
 <template>
-    <span :data-slug="slug" class="tag">{{ name }}</span>
+    <li :data-slug="slug" class="tag"><button>{{ name }}</button></li>
 </template>
 
 <script>
@@ -20,9 +20,16 @@ export default {
 
 <style>
     .tag {
-        background-color: #78C5EF;
-        color: white;
+        background-color: #f2f7fa;
         border-radius: 10px;
-        padding: 5px
+        padding: 4px 8px;
     }
+
+    .tag:hover {
+        background-color: rgb(198, 209, 241);
+    }
+
+    .tag:not(:last-child) {
+		margin-right: 0.5rem;
+	}
 </style>
