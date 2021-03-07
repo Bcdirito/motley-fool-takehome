@@ -1,7 +1,7 @@
-<template v-if="mainArticleExists">
-    <div id="mainArticleContent">
+<template>
+    <div id="mainArticleContent" v-if="mainArticleExists && !articleSelected">
         <section id="imageContainer">
-            <img class="image" :src="mainImageExists" />
+            <img class="image" :src="article.images[0].image" />
         </section>
         <section class="contentWrapper">
             <ul class="tagWrapper">
@@ -10,9 +10,10 @@
                     :key="'mainTag-' + idx"
                     :name="tag.name"
                     :slug="tag.slug"
+                    :filterEvent="filterHandler"
                 />
             </ul>
-            <h2>{{article.headline}}</h2>
+            <a><h2 :data-uuid="article.uuid" @click="articleSelector">{{article.headline}}</h2></a>
             <p>{{article.promo}}</p>
         </section>
     </div>
@@ -29,14 +30,23 @@ export default {
         article: {
             type: Object,
             default: () => {}
+        },
+        articleSelector: {
+            type: Function
+        },
+        selectedArticle: {
+            type: Boolean
+        },
+        filterHandler: {
+            type: Function
         }
     },
     computed: {
         mainArticleExists() {
             return this.article.uuid
         },
-        mainImageExists() {
-            return this.article.uuid ? this.article.images[0].image : ""       
+        articleSelected() {
+            return this.selectedArticle
         }
     }
 }

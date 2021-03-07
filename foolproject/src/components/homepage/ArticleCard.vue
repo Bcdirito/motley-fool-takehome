@@ -1,5 +1,5 @@
 <template>
-  <div class="articleCard">
+  <div class="articleCard" v-if="!articleSelected">
     <img class="articleCardImage" :src="metadata.images[0].image"/>
     <div class="contentWrapper">
         <ul class="tagWrapper">
@@ -8,9 +8,10 @@
             :key="'cardTag-' + idx"
             :name="tag.name"
             :slug="tag.slug"
+            :filterEvent="filterHandler"
         />
         </ul>
-        <a class="articleCardHeadline"><h3>{{metadata.headline}}</h3></a>
+        <a class="articleCardHeadline"><h3 :data-uuid="metadata.uuid" @click="articleSelector">{{metadata.headline}}</h3></a>
         <p class="cardPromo">{{metadata.promo}}</p>
     </div>
   </div>
@@ -27,12 +28,21 @@ export default {
         metadata: {
             type: Object,
             default: () => {}
+        },
+        articleSelector: {
+            type: Function
+        },
+        selectedArticle: {
+            type: Boolean
+        },
+        filterHandler: {
+            type: Function
         }
     },
     computed: {
-        // articlesExist() {
-        //     return this.metadata.length
-        // }
+        articleSelected() {
+            return this.selectedArticle
+        }
     }
 }
 </script>

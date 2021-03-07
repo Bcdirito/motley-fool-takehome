@@ -1,5 +1,7 @@
 <template>
-    <li :data-slug="slug" class="tag"><button>{{ name }}</button></li>
+    <li :data-slug="slug" :data-name="name" class="tag" @click="filterEvent">
+        {{ name }}
+    </li>
 </template>
 
 <script>
@@ -12,6 +14,9 @@ export default {
         slug: {
             type: String,
             default: ""
+        },
+        filterEvent: {
+            type: Function
         }
     }
     
@@ -23,6 +28,7 @@ export default {
         background-color: #f2f7fa;
         border-radius: 10px;
         padding: 4px 8px;
+        cursor: pointer;
     }
 
     .tag:hover {

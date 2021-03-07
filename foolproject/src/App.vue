@@ -1,20 +1,48 @@
 <template>
 	<div id="app">
+		<div id="filterTags">
+			<div class="sortSelect">
+				<span class="sortText">Sort By:</span>
+				<select name="Sort Article By:" id="sortOptions" @change="sortArticles">
+				<option value="non">--</option>
+				<option value="newest">Newest</option>
+				<option value="oldest">Oldest</option>
+				<option value="alpha">Alphabetical</option>
+			</select>
+			</div>
+			<div class="filterContainer">
+				<h3>Filtering By:</h3>
+				<ul class="tagWrapper">
+					<Tag v-for="(tag, idx) in filterTags"
+						:key="'filterTag-' + idx"
+						:name="tag.name"
+						:slug="tag.slug"
+						:filterEvent="removeFilterByTag"
+					/>
+				</ul>
+			</div>
+		</div>
 		<section id="mainArticleSection">
 			<MainArticle
 				:article="mainArticleData"
+				:articleSelector="selectArticle"
+				:selectedArticle="selectedArticleData.uuid !== undefined"
+				:filterHandler="filterByTag"
 			/>
 		</section>
-		<section v-if="articleSelected.selected === false" id="articleCardSection">
+		<section id="articleCardSection">
 			<ArticleCard
 				v-for="(article, idx) in secondaryArticleData"
 				:key="idx"
 				:metadata="article"
+				:articleSelector="selectArticle"
+				:selectedArticle="selectedArticleData.uuid !== undefined"
+				:filterHandler="filterByTag"
 				/>
 		</section>
 		<section id="articlePageSection">
 			<ArticlePage
-				:article="articleSelected.article"
+				:article="selectedArticle"
 				:headlines="headlineData"
 			/>
 		</section>
@@ -25,29 +53,26 @@
 import MainArticle from "./components/homepage/MainArticle.vue"
 import ArticleCard from "./components/homepage/ArticleCard.vue"
 import ArticlePage from "./components/articlePage/ArticlePage.vue"
-
+import Tag from "./components/general/Tag"
 export default {
   name: 'App',
   components: {
     MainArticle,
     ArticleCard,
-    ArticlePage
+    ArticlePage,
+	Tag
   },
   data() {
 	return {
 		articles: {
 			main: {},
 			secondary: [],
-			all: []
+			all: [],
 		},
-		featuredArticle: {},
-		displayFeatured: true,
-		articleSelected: {
-			selected: false,
-			article: {}
-		},
+		selectedArticle: {},
 		tickers: [],
-		headlines: []
+		headlines: [],
+		filterTags: []
     }
   },
   computed: {
@@ -82,11 +107,23 @@ export default {
 		set: function(headlines) {
 			this.headlines = headlines
 		}
-	}
-    // refactor for when article selected getter and setter created
-    // mainArticleExists() {
-    //   return !this.articleSelected.selected && this.mainArticleData.uuid
-    // }
+	},
+	selectedArticleData: {
+		get: function() {
+			return this.selectedArticle
+		},
+		set: function(article) {
+			this.selectedArticle = article
+		}
+	},
+	filterTagData: {
+		get: function() {
+			return this.filterTags
+		},
+		set: function(tags) {
+			return this.filterTags = tags
+		}
+	},
   },
   created() {
     this.getData()
@@ -110,8 +147,74 @@ export default {
 		}
 
 		this.secondaryArticleData = secondaryArticles
-		this.articleSelected.article = results[0]
 		this.headlineData = headlineArr.sort((a, b) => b.publishedDate - a.publishedDate)
+	},
+	selectArticle(e) {
+		const selectedArticle = this.allArticleData.find(article => article.uuid === e.target.dataset.uuid)
+		this.selectedArticleData = selectedArticle
+		const pathStr = `/${encodeURI(selectedArticle.headline.replaceAll(" ", "-").toLowerCase())}`
+		window.history.pushState({path:pathStr},'',pathStr);
+	},
+	sortArticles(e) {
+		let articlesCopy = this.secondaryArticleData.length < 9 ? [this.mainArticleData, ...this.secondaryArticleData] : this.allArticleData.slice()
+
+		if (e.target.value === "newest") articlesCopy.sort((a, b) => new Date(b.publish_at) - new Date(a.publish_at))
+		else if (e.target.value === "oldest") articlesCopy.sort((a, b) => new Date(a.publish_at) - new Date(b.publish_at))
+		else articlesCopy.sort((a, b) => a.headline.localeCompare(b.headline))
+
+		this.mainArticleData = {}
+		this.secondaryArticleData = []
+		const secondaryArticles = []
+
+		for (const article of articlesCopy) {
+			if (!this.mainArticleData.uuid && article.tags.some(tag => tag.slug === "10-promise")) this.mainArticleData = article
+			else secondaryArticles.push(article)
+		}
+
+		this.secondaryArticleData = secondaryArticles
+	},
+	async filterByTag(e) {
+		const {name, slug} = e.target.dataset
+		const tagObj = {name, slug}
+		const filterTags = Array.from(new Set([...this.filterTagData, tagObj]))
+		this.filterTagData = filterTags
+		const queryParams = filterTags.map(tag => `tag=${tag.slug}`).join("&")
+		
+		const res = await fetch(`/content?${queryParams}`)
+		const { results } = await res.json()
+
+		this.mainArticleData = {}
+		this.secondaryArticleData = []
+		const secondaryArticles = []
+
+		for (const result of results) {
+			if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === "10-promise")) this.mainArticleData = result
+			else secondaryArticles.push(result)
+		}
+
+		this.secondaryArticleData = secondaryArticles
+	},
+	async removeFilterByTag(e) {
+		const {name, slug} = e.target.dataset
+		const filterTags = this.filterTagData.filter(filter => 
+			name !== filter.name && slug !== filter.slug
+		)
+		this.filterTagData = filterTags
+		const queryParams = filterTags.map(tag => `tag=${tag.slug}`).join("&")
+
+		const res = await fetch(`/content?${queryParams}`)
+		const { results } = await res.json()
+
+		this.mainArticleData = {}
+		this.secondaryArticleData = []
+		const secondaryArticles = []
+
+		for (const result of results) {
+			if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === "10-promise")) this.mainArticleData = result
+			else secondaryArticles.push(result)
+		}
+
+		this.secondaryArticleData = secondaryArticles
 	}
   }
 }
@@ -156,10 +259,19 @@ export default {
 		font-family: 'Open Sans', sans-serif;
 	}
 
+	a {
+        cursor: pointer;
+    }
+
 	#app {
 		max-width: 1440px;
 		margin-left: auto;
 		margin-right: auto;
+	}
+
+	#filterTags {
+		background-color: var(--white);
+		width: 100%;
 	}
 
 	.tagWrapper {

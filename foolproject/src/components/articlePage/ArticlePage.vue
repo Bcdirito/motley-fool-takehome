@@ -1,5 +1,5 @@
-<template v-if="selectedArticleExists">
-    <div>
+<template>
+    <div id="articlePage" v-if="selectedArticleExists">
         <article id="articleContent">
             <Tag 
                 v-for="(tag, idx) in article.tags"
@@ -10,7 +10,7 @@
             <p class="byline">{{article.byline}} {{generateDateString()}}</p>
             <h2>{{article.headline}}</h2>
             <div v-html="article.body"></div>
-            <aside>
+            <aside v-if="selectedArticleExists">
                 <Ticker
                     v-for="(instrument, idx) in article.instruments"
                     :key="'instrument-' + idx"
