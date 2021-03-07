@@ -1,7 +1,7 @@
 <template>
     <div>
         <h3>Recent Headlines:</h3>
-        <ul>
+        <ul class="headlinesContainer">
             <li v-for="(headline, idx) in filteredHeadlines()"
                 :key="'headline-' + idx"
                 class="headlineLink"
@@ -35,9 +35,16 @@ export default {
 </script>
 
 <style>
-    .headlineLink {
+    .headlinesContainer {
+        list-style-type: disc;
+    }
+
+    .headlineLink a {
         color: blue;
-        margin-bottom: 0.5rem;
         text-decoration: underline;
+    }
+
+    .headlineLink:not(:last-child) {
+        margin-bottom: 0.5rem;
     }
 </style>

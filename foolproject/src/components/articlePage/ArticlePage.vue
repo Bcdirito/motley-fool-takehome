@@ -1,9 +1,8 @@
 <template>
     <div id="articlePage" v-if="selectedArticleExists">
-        <h1 class="headline">{{article.headline}}</h1>
         <article id="articleContent">
-            <div id="textContent">
-                <p class="byline"><img :src="article.authors[0].small_avatar_url" class="authorAvatar" />{{article.byline}} - {{generateDateString()}}</p>
+            <div class="articleData">
+                <h1 class="headline">{{article.headline}}</h1>
                 <ul class="tagWrapper">
                     <Tag 
                         v-for="(tag, idx) in article.tags"
@@ -12,30 +11,35 @@
                         :slug="tag.slug"
                     />
                 </ul>
-                <div v-html="article.body"/>
-                <div v-html="article.disclosure" class="disclosure"/>
-                <hr class="mobileDivider"/>
+                <p class="byline"><img :src="article.authors[0].small_avatar_url" class="authorAvatar" />{{article.byline}} - {{generateDateString()}}</p>
             </div>
-            <aside v-if="selectedArticleExists">
-                <div class="tickerContainer">
-                    <Ticker
-                        v-for="(instrument, idx) in article.instruments"
-                        :key="'instrument-' + idx"
-                        :company="instrument.company_name"
-                        :symbol="instrument.symbol"
-                    />
+            <div id="mainContent">
+                <div id="textContent">
+                    <div v-html="article.body"/>
+                    <div v-html="article.disclosure" class="disclosure"/>
+                    <hr class="mobileDivider"/>
                 </div>
-                <hr class="asideDivider"/>
-                <div>
-                    <RecentHeadlines 
-                        :headlines="headlines"
-                        :articleUUID="article.uuid"
-                    />
-                </div>
-            </aside>
+                <aside v-if="selectedArticleExists" id="tickerHeadlines">
+                    <div class="tickerContainer">
+                        <Ticker
+                            v-for="(instrument, idx) in article.instruments"
+                            :key="'instrument-' + idx"
+                            :company="instrument.company_name"
+                            :symbol="instrument.symbol"
+                        />
+                    </div>
+                    <hr class="asideDivider"/>
+                    <div>
+                        <RecentHeadlines 
+                            :headlines="headlines"
+                            :articleUUID="article.uuid"
+                        />
+                    </div>
+                </aside>
+            </div>
         </article>
         <hr>
-        <section>
+        <section id="commentsSection">
             <h3>Comments</h3>
             <textarea name="comments" id="commentsBox" cols="30" rows="10"></textarea>
         </section>
@@ -88,11 +92,11 @@ export default {
         padding: 1rem;
     }
 
+    #articleContent {
+        width: 100%;
+    }
+
     .authorAvatar {
-        width: 2rem;
-        border-radius: 25px;
-        margin-right: 0.5rem;
-        padding-left: 4px;
         display: none;
     }
 
@@ -106,7 +110,7 @@ export default {
     }
 
     #articleContent .tagWrapper {
-        padding: 1rem 0;
+        padding-bottom: 1rem;
     }
 
     .caption, .disclosure {
@@ -122,6 +126,36 @@ export default {
     @media (min-width: 1024px) {
         .mobileDivider {
             display: none;
+        }
+
+        #textContent {
+            padding-right: 1.5rem;
+        }
+
+        #mainContent {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            column-gap: 1.5rem;
+        }
+
+        #tickerHeadlines {
+            padding-left: 0.5rem;
+        }
+
+        #commentsSection {
+            width: 100%;
+        }
+
+        .authorAvatar {
+            display: inline;
+            width: 2rem;
+            border-radius: 25px;
+            margin-right: 0.5rem;
+            padding-left: 4px;
+        }
+
+        #commentsBox {
+            width: 50%;
         }
     }
 </style>

@@ -53,4 +53,10 @@ export default {
     .tickerData {
         margin: 0.75rem 0;
     }
+
+    @media (min-width: 1024px) {
+        .chart {
+            font-size: 5rem;
+        }
+    }
 </style>
