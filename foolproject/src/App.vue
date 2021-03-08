@@ -1,5 +1,8 @@
 <template>
 	<div id="app">
+		<nav id="homeNav">
+			<span>Motley Fool Take Home</span>
+		</nav>
 		<div id="filterTagContainer" v-if="selectedArticleData.uuid === undefined">
 			<div class="sortSelect">
 				<span class="sortText">Sort By:</span>
@@ -314,6 +317,7 @@ export default {
 	:root {
 		--grey: rgb(241, 244, 254);
 		--white: #fff;
+		--purple: #8BA4FF
 	}
 
 	* {
@@ -358,6 +362,16 @@ export default {
 		margin-left: auto;
 		margin-right: auto;
 		padding-bottom: 1.5rem;
+	}
+
+	#homeNav {
+		background-color: var(--purple);
+		text-align: center;
+		font-size: 1.75rem;
+		border-radius: 15px;
+		padding: 0.5rem;
+		margin-bottom: 1rem;
+		color: var(--white);
 	}
 
 	#filterTagContainer {

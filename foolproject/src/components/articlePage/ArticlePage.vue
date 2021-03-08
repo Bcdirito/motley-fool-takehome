@@ -116,7 +116,7 @@ export default {
     }
 
     .xIcon {
-        color: #8BA4FF;
+        color: var(--purple);
         font-size: 1.5rem;
         margin: 0;
         cursor: pointer;
@@ -157,7 +157,7 @@ export default {
         background-color: var(--grey);
         padding: 1rem;
         border-radius: 15px;
-        border: 2px solid #8BA4FF;
+        border: 2px solid var(--purple);
     }
 
     @media (min-width: 768px) {
