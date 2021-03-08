@@ -1,18 +1,21 @@
 <template>
 	<div id="app">
-		<div id="filterTags" v-if="selectedArticleData.uuid === undefined">
+		<nav id="homeNav">
+			<span>Motley Fool Take Home</span>
+		</nav>
+		<div id="filterTagContainer" v-if="selectedArticleData.uuid === undefined">
 			<div class="sortSelect">
 				<span class="sortText">Sort By:</span>
 				<select name="Sort Article By:" id="sortOptions" @change="sortArticles">
-				<option value="non">--</option>
+				<option value="">--</option>
 				<option value="newest">Newest</option>
 				<option value="oldest">Oldest</option>
 				<option value="alpha">Alphabetical</option>
 			</select>
 			</div>
-			<div class="filterContainer">
-				<h3>Filtering By:</h3>
+			<div class="filterContainer" v-if="filterTagData.length > 0">
 				<ul class="tagWrapper">
+					<span class="filterTitle">Filtering By:</span>
 					<Tag v-for="(tag, idx) in filterTags"
 						:key="'filterTag-' + idx"
 						:name="tag.name"
@@ -58,6 +61,10 @@ import MainArticle from "./components/homepage/MainArticle.vue"
 import ArticleCard from "./components/homepage/ArticleCard.vue"
 import ArticlePage from "./components/articlePage/ArticlePage.vue"
 import Tag from "./components/general/Tag"
+
+import articleFunctions from "./utils/articleFunctions.js"
+import tickerFunctions from "./utils/tickerFunctions.js"
+
 export default {
   name: 'App',
   components: {
@@ -79,7 +86,8 @@ export default {
 			selected: []
 		},
 		headlines: [],
-		filterTags: []
+		filterTags: [],
+		featuredSlug: process.env.VUE_APP_FEATURED_SLUG
     }
   },
   computed: {
@@ -146,6 +154,9 @@ export default {
 		set: function(tickers) {
 			this.tickers.selected = tickers
 		}
+	},
+	getFeaturedSlug() {
+		return this.featuredSlug
 	}
   },
   created() {
@@ -157,125 +168,87 @@ export default {
 		const res = await fetch('/content')
 		const { results } = await res.json()
 		this.allArticleData = results
-		const secondaryArticles = []
-		const headlineArr = []
-		const tickerArr = []
 
-		for (const result of results) {
-			if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === "10-promise")) this.mainArticleData = result
-			else secondaryArticles.push(result)
-			headlineArr.push({
-				uuid: result.uuid,
-				title: result.headline,
-				publishedDate: new Date(result.publish_at)
-			})
-			tickerArr.push(...result.instruments)
-		}
+		const {main, secondary, headlines, tickers} = articleFunctions.allArticleFilter(results, this.getFeaturedSlug)
 
-		this.allTickerData = Array.from(new Set(tickerArr))
-		this.secondaryArticleData = secondaryArticles
-		this.headlineData = headlineArr.sort((a, b) => b.publishedDate - a.publishedDate)
+		this.mainArticleData = main
+		this.allTickerData = Array.from(new Set(tickers))
+		this.secondaryArticleData = secondary
+		this.headlineData = headlines.sort((a, b) => b.publishedDate - a.publishedDate)
 	},
 	selectArticle(e) {
 		const selectedArticle = this.allArticleData.find(article => article.uuid === e.target.dataset.uuid)
 		this.selectedArticleData = selectedArticle
 		const pathStr = `${selectedArticle.collection.path}/${encodeURI(selectedArticle.headline.replaceAll(" ", "-").toLowerCase())}`
 		const tickers = selectedArticle.instruments.slice(0, 3)
-		const allTickers = this.allTickerData
 
-		if (tickers.length < 3) {
-			const history = {}
-			for (const ticker of tickers) {
-				history[ticker.instrument_id] = 1
-			}
+		if (tickers.length < 3) this.selectedTickerData = tickerFunctions.getFullTickers(tickers, this.allTickerData)
+		else this.selectedTickerData = tickers
 
-			while (tickers.length < 3) {
-				const randomIdx = Math.floor(Math.random() * allTickers.length)
-				const ticker = allTickers[randomIdx]
-				if (!history[ticker.instrument_id]) tickers.push(ticker)
-			} 
-		}
-
-		this.selectedTickerData = tickers
 		window.history.pushState({path:pathStr},'',pathStr);
 		window.scrollTo(0, 0)
 	},
 	sortArticles(e) {
 		let articlesCopy = this.secondaryArticleData.length < 9 ? [this.mainArticleData, ...this.secondaryArticleData] : this.allArticleData.slice()
+		
+		articleFunctions.sortArticles(articlesCopy, e.target.value)
+		const {main, secondary} = articleFunctions.articleFilter(articlesCopy, this.getFeaturedSlug)
 
-		if (e.target.value === "newest") articlesCopy.sort((a, b) => new Date(b.publish_at) - new Date(a.publish_at))
-		else if (e.target.value === "oldest") articlesCopy.sort((a, b) => new Date(a.publish_at) - new Date(b.publish_at))
-		else articlesCopy.sort((a, b) => a.headline.localeCompare(b.headline))
-
-		this.mainArticleData = {}
-		this.secondaryArticleData = []
-		const secondaryArticles = []
-
-		for (const article of articlesCopy) {
-			if (!this.mainArticleData.uuid && article.tags.some(tag => tag.slug === "10-promise")) this.mainArticleData = article
-			else secondaryArticles.push(article)
-		}
-
-		this.secondaryArticleData = secondaryArticles
+		this.mainArticleData = main
+		this.secondaryArticleData = secondary
 	},
 	async filterByTag(e) {
-		const {name, slug} = e.target.dataset
-		const tagObj = {name, slug}
-		const filterTags = Array.from(new Set([...this.filterTagData, tagObj]))
-		this.filterTagData = filterTags
-		const queryParams = filterTags.map(tag => `tag=${tag.slug}`).join("&")
-		
-		const res = await fetch(`/content?${queryParams}`)
-		const { results } = await res.json()
+		const history = {}
 
-		this.mainArticleData = {}
-		this.secondaryArticleData = []
-		const secondaryArticles = []
-
-		for (const result of results) {
-			if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === "10-promise")) this.mainArticleData = result
-			else secondaryArticles.push(result)
+		for (const tag of this.filterTagData) {
+			history[tag.slug] = 1
 		}
 
-		this.secondaryArticleData = secondaryArticles
+		if (!history[e.target.dataset.slug]) {
+			const {name, slug} = e.target.dataset
+			const tagObj = {name, slug}
+			const filterTags = [...this.filterTagData, tagObj]
+			this.filterTagData = filterTags
+
+			const queryParams = filterTags.map(tag => `tag=${tag.slug}`).join("&")
+			const sortOption = document.getElementById("sortOptions").value
+
+			const res = await fetch(`/content?${queryParams}`)
+			const { results } = await res.json()
+
+			articleFunctions.sortArticles(results, sortOption)
+
+			const {main, secondary} = articleFunctions.articleFilter(results, this.getFeaturedSlug)
+
+			this.mainArticleData = main
+			this.secondaryArticleData = secondary
+		}
 	},
 	async removeFilterByTag(e) {
 		const {name, slug} = e.target.dataset
 		const filterTags = this.filterTagData.filter(filter => 
 			name !== filter.name && slug !== filter.slug
 		)
+
 		this.filterTagData = filterTags
+
 		const queryParams = filterTags.map(tag => `tag=${tag.slug}`).join("&")
+		const sortOption = document.getElementById("sortOptions").value
 
 		const res = await fetch(`/content?${queryParams}`)
 		const { results } = await res.json()
 
-		this.mainArticleData = {}
-		this.secondaryArticleData = []
-		const secondaryArticles = []
+		articleFunctions.sortArticles(results, sortOption)
 
-		for (const result of results) {
-			if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === "10-promise")) this.mainArticleData = result
-			else secondaryArticles.push(result)
-		}
+		const {main, secondary} = articleFunctions.articleFilter(results, this.getFeaturedSlug)
 
-		this.secondaryArticleData = secondaryArticles
+		this.mainArticleData = main
+		this.secondaryArticleData = secondary
 	},
 	shuffleTickers() {
 		const selectedTickers = this.selectedTickerData
 		const allTickers = this.allTickerData
-		const history = {}
-		const newTickers = []
-
-		for (const ticker of selectedTickers) {
-			history[ticker.instrument_id] = 1
-		}
-
-		while (newTickers.length < 3) {
-			const randomIdx = Math.floor(Math.random() * allTickers.length)
-			const ticker = allTickers[randomIdx]
-			if (!history[ticker.instrument_id]) newTickers.push(ticker)
-		}
+		const newTickers = tickerFunctions.shuffleTickers(selectedTickers, allTickers)
 
 		this.selectedTickerData = newTickers
 	},
@@ -291,6 +264,7 @@ export default {
 	:root {
 		--grey: rgb(241, 244, 254);
 		--white: #fff;
+		--purple: #8BA4FF
 	}
 
 	* {
@@ -337,9 +311,26 @@ export default {
 		padding-bottom: 1.5rem;
 	}
 
-	#filterTags {
+	#homeNav {
+		background-color: var(--purple);
+		text-align: center;
+		font-size: 1.75rem;
+		border-radius: 15px;
+		padding: 0.5rem;
+		margin-bottom: 1rem;
+		color: var(--white);
+	}
+
+	#filterTagContainer {
 		background-color: var(--white);
 		width: 100%;
+		margin-bottom: 4%;
+		padding: 0.5rem;
+		border-radius: 15px;
+	}
+
+	#sortOptions {
+		margin-left: 0.5rem;
 	}
 
 	.tagWrapper {
@@ -347,6 +338,10 @@ export default {
 		align-items: baseline;
 		flex-wrap: wrap;
 		gap: 0.5rem 0;
+	}
+
+	.filterTitle {
+		margin-right: 0.5rem;
 	}
 
 	.contentWrapper {
