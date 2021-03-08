@@ -1,6 +1,6 @@
 <template>
 	<div id="app">
-		<div id="filterTags" v-if="selectedArticleData.uuid === undefined">
+		<div id="filterTagContainer" v-if="selectedArticleData.uuid === undefined">
 			<div class="sortSelect">
 				<span class="sortText">Sort By:</span>
 				<select name="Sort Article By:" id="sortOptions" @change="sortArticles">
@@ -10,9 +10,9 @@
 				<option value="alpha">Alphabetical</option>
 			</select>
 			</div>
-			<div class="filterContainer">
-				<h3>Filtering By:</h3>
+			<div class="filterContainer" v-if="filterTagData.length > 0">
 				<ul class="tagWrapper">
+					<span class="filterTitle">Filtering By:</span>
 					<Tag v-for="(tag, idx) in filterTags"
 						:key="'filterTag-' + idx"
 						:name="tag.name"
@@ -360,9 +360,16 @@ export default {
 		padding-bottom: 1.5rem;
 	}
 
-	#filterTags {
+	#filterTagContainer {
 		background-color: var(--white);
 		width: 100%;
+		margin-bottom: 4%;
+		padding: 0.5rem;
+		border-radius: 15px;
+	}
+
+	#sortOptions {
+		margin-left: 0.5rem;
 	}
 
 	.tagWrapper {
@@ -370,6 +377,10 @@ export default {
 		align-items: baseline;
 		flex-wrap: wrap;
 		gap: 0.5rem 0;
+	}
+
+	.filterTitle {
+		margin-right: 0.5rem;
 	}
 
 	.contentWrapper {
