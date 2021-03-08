@@ -61,6 +61,10 @@ import MainArticle from "./components/homepage/MainArticle.vue"
 import ArticleCard from "./components/homepage/ArticleCard.vue"
 import ArticlePage from "./components/articlePage/ArticlePage.vue"
 import Tag from "./components/general/Tag"
+
+import articleFunctions from "./utils/articleFunctions.js"
+import tickerFunctions from "./utils/tickerFunctions.js"
+
 export default {
   name: 'App',
   components: {
@@ -164,65 +168,34 @@ export default {
 		const res = await fetch('/content')
 		const { results } = await res.json()
 		this.allArticleData = results
-		const secondaryArticles = []
-		const headlineArr = []
-		const tickerArr = []
-		for (const result of results) {
-			if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === this.getFeaturedSlug)) this.mainArticleData = result
-			else secondaryArticles.push(result)
-			headlineArr.push({
-				uuid: result.uuid,
-				title: result.headline,
-				publishedDate: new Date(result.publish_at)
-			})
-			tickerArr.push(...result.instruments)
-		}
 
-		this.allTickerData = Array.from(new Set(tickerArr))
-		this.secondaryArticleData = secondaryArticles
-		this.headlineData = headlineArr.sort((a, b) => b.publishedDate - a.publishedDate)
+		const {main, secondary, headlines, tickers} = articleFunctions.allArticleFilter(results, this.getFeaturedSlug)
+
+		this.mainArticleData = main
+		this.allTickerData = Array.from(new Set(tickers))
+		this.secondaryArticleData = secondary
+		this.headlineData = headlines.sort((a, b) => b.publishedDate - a.publishedDate)
 	},
 	selectArticle(e) {
 		const selectedArticle = this.allArticleData.find(article => article.uuid === e.target.dataset.uuid)
 		this.selectedArticleData = selectedArticle
 		const pathStr = `${selectedArticle.collection.path}/${encodeURI(selectedArticle.headline.replaceAll(" ", "-").toLowerCase())}`
 		const tickers = selectedArticle.instruments.slice(0, 3)
-		const allTickers = this.allTickerData
 
-		if (tickers.length < 3) {
-			const history = {}
-			for (const ticker of tickers) {
-				history[ticker.instrument_id] = 1
-			}
+		if (tickers.length < 3) this.selectedTickerData = tickerFunctions.getFullTickers(tickers, this.allTickerData)
+		else this.selectedTickerData = tickers
 
-			while (tickers.length < 3) {
-				const randomIdx = Math.floor(Math.random() * allTickers.length)
-				const ticker = allTickers[randomIdx]
-				if (!history[ticker.instrument_id]) tickers.push(ticker)
-			} 
-		}
-
-		this.selectedTickerData = tickers
 		window.history.pushState({path:pathStr},'',pathStr);
 		window.scrollTo(0, 0)
 	},
 	sortArticles(e) {
 		let articlesCopy = this.secondaryArticleData.length < 9 ? [this.mainArticleData, ...this.secondaryArticleData] : this.allArticleData.slice()
+		
+		articleFunctions.sortArticles(articlesCopy, e.target.value)
+		const {main, secondary} = articleFunctions.articleFilter(articlesCopy, this.getFeaturedSlug)
 
-		if (e.target.value === "newest") articlesCopy.sort((a, b) => new Date(b.publish_at) - new Date(a.publish_at))
-		else if (e.target.value === "oldest") articlesCopy.sort((a, b) => new Date(a.publish_at) - new Date(b.publish_at))
-		else if (e.target.value === "alpha") articlesCopy.sort((a, b) => a.headline.localeCompare(b.headline))
-
-		this.mainArticleData = {}
-		this.secondaryArticleData = []
-		const secondaryArticles = []
-
-		for (const article of articlesCopy) {
-			if (!this.mainArticleData.uuid && article.tags.some(tag => tag.slug === this.getFeaturedSlug)) this.mainArticleData = article
-			else secondaryArticles.push(article)
-		}
-
-		this.secondaryArticleData = secondaryArticles
+		this.mainArticleData = main
+		this.secondaryArticleData = secondary
 	},
 	async filterByTag(e) {
 		const history = {}
@@ -236,27 +209,19 @@ export default {
 			const tagObj = {name, slug}
 			const filterTags = [...this.filterTagData, tagObj]
 			this.filterTagData = filterTags
+
 			const queryParams = filterTags.map(tag => `tag=${tag.slug}`).join("&")
 			const sortOption = document.getElementById("sortOptions").value
 
 			const res = await fetch(`/content?${queryParams}`)
 			const { results } = await res.json()
 
-			if (sortOption === "newest") results.sort((a, b) => new Date(b.publish_at) - new Date(a.publish_at))
-			else if (sortOption === "oldest") results.sort((a, b) => new Date(a.publish_at) - new Date(b.publish_at))
-			else if (sortOption === "alpha") results.sort((a, b) => a.headline.localeCompare(b.headline))
+			articleFunctions.sortArticles(results, sortOption)
 
+			const {main, secondary} = articleFunctions.articleFilter(results, this.getFeaturedSlug)
 
-			this.mainArticleData = {}
-			this.secondaryArticleData = []
-			const secondaryArticles = []
-
-			for (const result of results) {
-				if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === this.getFeaturedSlug)) this.mainArticleData = result
-				else secondaryArticles.push(result)
-			}
-
-			this.secondaryArticleData = secondaryArticles
+			this.mainArticleData = main
+			this.secondaryArticleData = secondary
 		}
 	},
 	async removeFilterByTag(e) {
@@ -266,42 +231,24 @@ export default {
 		)
 
 		this.filterTagData = filterTags
+
 		const queryParams = filterTags.map(tag => `tag=${tag.slug}`).join("&")
 		const sortOption = document.getElementById("sortOptions").value
 
 		const res = await fetch(`/content?${queryParams}`)
 		const { results } = await res.json()
 
-		if (sortOption === "newest") results.sort((a, b) => new Date(b.publish_at) - new Date(a.publish_at))
-		else if (sortOption === "oldest") results.sort((a, b) => new Date(a.publish_at) - new Date(b.publish_at))
-		else if (sortOption === "alpha") results.sort((a, b) => a.headline.localeCompare(b.headline))
+		articleFunctions.sortArticles(results, sortOption)
 
-		this.mainArticleData = {}
-		this.secondaryArticleData = []
-		const secondaryArticles = []
+		const {main, secondary} = articleFunctions.articleFilter(results, this.getFeaturedSlug)
 
-		for (const result of results) {
-			if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === this.getFeaturedSlug)) this.mainArticleData = result
-			else secondaryArticles.push(result)
-		}
-
-		this.secondaryArticleData = secondaryArticles
+		this.mainArticleData = main
+		this.secondaryArticleData = secondary
 	},
 	shuffleTickers() {
 		const selectedTickers = this.selectedTickerData
 		const allTickers = this.allTickerData
-		const history = {}
-		const newTickers = []
-
-		for (const ticker of selectedTickers) {
-			history[ticker.instrument_id] = 1
-		}
-
-		while (newTickers.length < 3) {
-			const randomIdx = Math.floor(Math.random() * allTickers.length)
-			const ticker = allTickers[randomIdx]
-			if (!history[ticker.instrument_id]) newTickers.push(ticker)
-		}
+		const newTickers = tickerFunctions.shuffleTickers(selectedTickers, allTickers)
 
 		this.selectedTickerData = newTickers
 	},
