@@ -79,7 +79,8 @@ export default {
 			selected: []
 		},
 		headlines: [],
-		filterTags: []
+		filterTags: [],
+		featuredSlug: process.env.VUE_APP_FEATURED_SLUG
     }
   },
   computed: {
@@ -146,6 +147,9 @@ export default {
 		set: function(tickers) {
 			this.tickers.selected = tickers
 		}
+	},
+	getFeaturedSlug() {
+		return this.featuredSlug
 	}
   },
   created() {
@@ -160,9 +164,8 @@ export default {
 		const secondaryArticles = []
 		const headlineArr = []
 		const tickerArr = []
-
 		for (const result of results) {
-			if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === "10-promise")) this.mainArticleData = result
+			if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === this.getFeaturedSlug)) this.mainArticleData = result
 			else secondaryArticles.push(result)
 			headlineArr.push({
 				uuid: result.uuid,
@@ -212,7 +215,7 @@ export default {
 		const secondaryArticles = []
 
 		for (const article of articlesCopy) {
-			if (!this.mainArticleData.uuid && article.tags.some(tag => tag.slug === "10-promise")) this.mainArticleData = article
+			if (!this.mainArticleData.uuid && article.tags.some(tag => tag.slug === this.getFeaturedSlug)) this.mainArticleData = article
 			else secondaryArticles.push(article)
 		}
 
@@ -246,7 +249,7 @@ export default {
 			const secondaryArticles = []
 
 			for (const result of results) {
-				if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === "10-promise")) this.mainArticleData = result
+				if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === this.getFeaturedSlug)) this.mainArticleData = result
 				else secondaryArticles.push(result)
 			}
 
@@ -275,7 +278,7 @@ export default {
 		const secondaryArticles = []
 
 		for (const result of results) {
-			if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === "10-promise")) this.mainArticleData = result
+			if (!this.mainArticleData.uuid && result.tags.some(tag => tag.slug === this.getFeaturedSlug)) this.mainArticleData = result
 			else secondaryArticles.push(result)
 		}
 
