@@ -11,12 +11,7 @@ The following repository contains Brian DiRito's application for Motley Fool's F
 
 * To install and run the server, use instructions found [here](#python-api-setup). The server runs at `http://127.0.0.1:8000/content`
 * To install and run the client, use instructions found [here](#vue-frontend-setup). The server runs at `http://localhost:8080/`
-* In order for the application to fetch and to get the correct featured slug, two environment variables must be defined in the first `./foolproject` level. Instuctions for the `.env` file are as follows:
-  * In `./foolproject` create a file called `.env` on the same level as the `vue.config.js` and `package.json`.
-  * Inside said file, define the following variables:
-    1. `VUE_APP_FEATURED_SLUG = "10-promise"`
-    2. `VUE_APP_PROXY_SERVER = "http://127.0.0.1:8000/"`
-    3. If client server currently running, restart client server for env changes to take effect
+* In order for the application to an environment file must be defined in the `foolproject` directory. Use instrunctions found [here](#environment-file-setup)
 
 Enjoy!
 
@@ -41,6 +36,14 @@ Enjoy!
 * Navigate to the `foolproject` directory
 * Run `npm install`
 * Run `npm run serve`, and observe the frontend running at `localhost:8080`
+
+### Environment File Setup
+* Navigate to the `foolproject` directory
+* On the same level as `vue.config.js` and `package.json`, create a file called `.env`
+* Inside said file, define the following variables:
+  1. `VUE_APP_FEATURED_SLUG = "10-promise"`
+  2. `VUE_APP_PROXY_SERVER = "http://127.0.0.1:8000/"`
+  3. If client server currently running, restart client server for env changes to take effect
 
 
 ## Motley Fool Developer Interview Project
