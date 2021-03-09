@@ -2,7 +2,7 @@
     <div id="articlePage" v-if="selectedArticleExists">
         <article id="articleContent">
             <div class="articleData">
-                <span class="xIcon" @click="backHandler">X</span>
+                <img src="../../assets/back-arrow.svg" class="xIcon" @click="backHandler" />
                 <h1 class="headline">{{article.headline}}</h1>
                 <ul class="tagWrapper">
                     <Tag 
@@ -121,9 +121,9 @@ export default {
 
     .xIcon {
         color: var(--purple);
-        font-size: 1.5rem;
         margin: 0;
         cursor: pointer;
+        width: 3rem;
     }
 
     .authorAvatar {
@@ -164,19 +164,13 @@ export default {
         border: 2px solid var(--purple);
     }
 
-    @media (min-width: 768px) {
-        .xIcon {
-            font-size: 2rem;
-        }
-    }
-
     @media (min-width: 1024px) {
         .mobileDivider {
             display: none;
         }
 
         .xIcon {
-            font-size: 1.75rem;
+            width: 4rem;
         }
 
         #textContent {

@@ -278,7 +278,7 @@ export default {
 		height: 100%;
 		padding: 0.5rem 1rem;
 		background-color: var(--grey);
-		font-family: 'Shippori Mincho', serif;
+		font-family: 'Libre Baskerville', serif;
 		font-weight: normal
 	}
 
