@@ -40,7 +40,7 @@ Enjoy!
 * Install vue-cli as documented here https://cli.vuejs.org/guide/installation.html
 * Navigate to the `foolproject` directory
 * Run `npm install`
-* Run `npm serve`, and observe the frontend running at `localhost:8080`
+* Run `npm run serve`, and observe the frontend running at `localhost:8080`
 
 
 ## Motley Fool Developer Interview Project
