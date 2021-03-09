@@ -39,10 +39,6 @@ export default {
 </script>
 
 <style>
-    .headlinesContainer {
-        list-style-type: disc;
-    }
-
     .headlineLink a {
         color: blue;
         text-decoration: underline;
@@ -50,5 +46,11 @@ export default {
 
     .headlineLink:not(:last-child) {
         margin-bottom: 0.5rem;
+    }
+
+    @media (min-width: 1024px) {
+        .headlinesContainer {
+            list-style-type: disc;
+        }
     }
 </style>
