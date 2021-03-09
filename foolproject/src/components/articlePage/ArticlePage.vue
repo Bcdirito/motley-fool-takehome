@@ -45,6 +45,7 @@
         <section id="commentsSection">
             <h3>Comments</h3>
             <textarea name="comments" id="commentsBox" cols="30" rows="10"></textarea>
+            <button class="newCommentsButton" @click="commentHandler">Add Comment</button>
         </section>
     </div>
 </template>
@@ -100,6 +101,9 @@ export default {
             const fullYear = publishedDateObj.getFullYear()
             
             return `${month} ${day}, ${fullYear}`
+        },
+        commentHandler() {
+            alert("You found the add comments button. Please handle comments with care.")
         }
     }
 }
@@ -153,7 +157,7 @@ export default {
         width: 100%
     }
 
-    .newStocksButton {
+    .newStocksButton, .newCommentsButton {
         background-color: var(--grey);
         padding: 1rem;
         border-radius: 15px;
@@ -203,6 +207,8 @@ export default {
 
         #commentsBox {
             width: 50%;
+            display: block;
+            margin-bottom: 1rem;
         }
     }
 </style>
